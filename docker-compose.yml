@@ -1,0 +1,79 @@
+version: "3.0"
+services:
+  es01:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.13.2
+    container_name: es01
+    environment:
+      - node.name=es01
+      - cluster.name=es-docker-cluster
+      - discovery.seed_hosts=es02,es03
+      - cluster.initial_master_nodes=es01,es02,es03
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    depends_on:
+      - es02
+      - es03
+
+  es02:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.13.2
+    container_name: es02
+    environment:
+      - node.name=es02
+      - cluster.name=es-docker-cluster
+      - discovery.seed_hosts=es01,es03
+      - cluster.initial_master_nodes=es01,es02,es03
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+
+  es03:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.13.2
+    container_name: es03
+    environment:
+      - node.name=es03
+      - cluster.name=es-docker-cluster
+      - discovery.seed_hosts=es01,es02
+      - cluster.initial_master_nodes=es01,es02,es03
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+
+  model1:
+    image: node
+    working_dir: /app
+    volumes:
+      - ./model1.mjs:/app/index.mjs
+      - ./package.json:/app/package.json
+      - node_modules:/app/node_modules
+    depends_on:
+      - es01
+
+  elastic2:
+    image: elasticsearch:7.13.2
+    environment:
+      - discovery.type=single-node
+  model2:
+    image: node
+    working_dir: /app
+    volumes:
+      - ./model2.mjs:/app/index.mjs
+      - ./package.json:/app/package.json
+      - node_modules:/app/node_modules
+    depends_on:
+      - es01
+
+networks:
+  network1:
+  network2:
+volumes:
+  node_modules:

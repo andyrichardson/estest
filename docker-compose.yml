@@ -9,7 +9,9 @@ services:
       - discovery.seed_hosts=es02,es03
       - cluster.initial_master_nodes=es01,es02,es03
       - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "ES_JAVA_OPTS=-Xms2G -Xmx2G"
+    volumes:
+      - data01:/usr/share/elasticsearch/data
     ulimits:
       memlock:
         soft: -1
@@ -27,7 +29,9 @@ services:
       - discovery.seed_hosts=es01,es03
       - cluster.initial_master_nodes=es01,es02,es03
       - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "ES_JAVA_OPTS=-Xms2G -Xmx2G"
+    volumes:
+      - data02:/usr/share/elasticsearch/data
     ulimits:
       memlock:
         soft: -1
@@ -42,7 +46,9 @@ services:
       - discovery.seed_hosts=es01,es02
       - cluster.initial_master_nodes=es01,es02,es03
       - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "ES_JAVA_OPTS=-Xms2G -Xmx2G"
+    volumes:
+      - data03:/usr/share/elasticsearch/data
     ulimits:
       memlock:
         soft: -1
@@ -77,3 +83,9 @@ networks:
   network2:
 volumes:
   node_modules:
+  data01:
+    driver: local
+  data02:
+    driver: local
+  data03:
+    driver: local

@@ -76,7 +76,7 @@ const chunk = (list, chunkSize) => {
         },
       },
     })
-    .catch(console.warn);
+    .catch(() => {});
   console.log("✅ done!\n");
 
   console.log(
@@ -90,12 +90,12 @@ const chunk = (list, chunkSize) => {
   console.log("✅ done!\n");
 
   console.log(
-    "############ Waiting for index to refresh (may take a while) ############"
+    "############ Waiting for full refresh of index (may take a while) ############"
   );
-  console.time("count");
+  console.time("full index refresh");
   const res = await client.cat.count({ index: INDEX, format: "json" });
-  console.log(`Result: ${prettyNum(res.body[0].count)}`);
-  console.timeEnd("count");
+  console.log(`Total documents in index: ${prettyNum(res.body[0].count)}`);
+  console.timeEnd("full index refresh");
   console.log("✅ done!\n");
 
   console.log("############ Reading elements from index ############");
@@ -105,7 +105,7 @@ const chunk = (list, chunkSize) => {
     const response = await read(inv);
     console.timeEnd(`read #${i}`);
     console.log(
-      `Invocation had ${response.body.hits.total.value} metric documents \n`
+      `Invocation ${inv} has ${response.body.hits.total.value} metric documents \n`
     );
   }
   console.log("✅ done!\n");
